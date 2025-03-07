@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Team Assigner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.2/dist/full.css" rel="stylesheet">
+    <style>
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .blinking {
+            animation: blink 0.5s infinite;
+        }
+
+        @keyframes spinColors {
+            0% { background-color: red; }
+            25% { background-color: blue; }
+            50% { background-color: green; }
+            75% { background-color: yellow; }
+            100% { background-color: red; }
+        }
+        .spinning-box {
+            width: 120px;
+            height: 120px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            border-radius: 50%;
+            animation: spinColors 2s linear infinite;
+        }
+        .team-logo {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .team-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div class="p-6 bg-white shadow-lg rounded-lg w-96 text-center">
+        <h2 class="text-xl font-bold mb-4">Random Team Assigner</h2>
+        <button id="assignButton" class="btn btn-primary mb-4">Assign Team</button>
+        <div id="animationBox" class="spinning-box hidden">
+            <img id="teamLogo" src="" alt="Team Logo" class="w-20 h-20 hidden">
+        </div>
+        <p id="statusMessage" class="mt-4 text-sm text-gray-600"></p>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="card w-full bg-base-100 shadow-md p-4">
+                <h3 class="font-bold mb-2">Group A</h3>
+                <ul id="groupAList" class="list-disc list-inside"></ul>
+            </div>
+            <div class="card w-full bg-base-100 shadow-md p-4">
+                <h3 class="font-bold mb-2">Group B</h3>
+                <ul id="groupBList" class="list-disc list-inside"></ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        let teams = [
+            { name: "Team 1", logo: "team1.png" },
+            { name: "Team 2", logo: "team2.png" },
+            { name: "Team 3", logo: "team3.png" },
+            { name: "Team 4", logo: "team4.png" },
+            { name: "Team 5", logo: "team5.png" },
+            { name: "Team 6", logo: "team6.png" },
+            { name: "Team 7", logo: "team7.png" },
+            { name: "Team 8", logo: "team8.png" }
+        ];
+        let groupA = [];
+        let groupB = [];
+        let turn = 0; // 0 for Group A, 1 for Group B
+
+        document.getElementById("assignButton").addEventListener("click", function() {
+            if (teams.length === 0) return;
+            
+            let statusMessage = document.getElementById("statusMessage");
+            let animationBox = document.getElementById("animationBox");
+            let teamLogo = document.getElementById("teamLogo");
+            animationBox.classList.remove("hidden");
+            teamLogo.classList.add("hidden");
+            statusMessage.textContent = "Selecting a team...";
+            statusMessage.classList.add("blinking");
+            
+            setTimeout(() => {
+                let randomIndex = Math.floor(Math.random() * teams.length);
+                let selectedTeam = teams[randomIndex];
+                teams.splice(randomIndex, 1);
+                
+                teamLogo.src = selectedTeam.logo;
+                teamLogo.classList.remove("hidden");
+                
+                setTimeout(() => {
+                    animationBox.classList.add("hidden");
+
+                    let listItem = `<li class='team-item'><img src='${selectedTeam.logo}' class='team-logo'>${selectedTeam.name}</li>`;
+                    if (turn % 2 === 0) {
+                        groupA.push(selectedTeam);
+                        document.getElementById("groupAList").innerHTML += listItem;
+                    } else {
+                        groupB.push(selectedTeam);
+                        document.getElementById("groupBList").innerHTML += listItem;
+                    }
+                    turn++;
+                    
+                    statusMessage.textContent = `${selectedTeam.name} has been assigned!`;
+                    statusMessage.classList.remove("blinking");
+                    
+                    if (teams.length === 0) {
+                        document.getElementById("assignButton").disabled = true;
+                        statusMessage.textContent = "All teams have been assigned!";
+                    }
+                }, 1000); // Show team name and logo briefly before assigning
+            }, 5000); // 5-second delay before showing assigned team
+        });
+    </script>
+</body>
+</html>

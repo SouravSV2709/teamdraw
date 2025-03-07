@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Team Assigner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.2/dist/full.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            --tw-bg-opacity: 0.2;
+        }
+
+        .export-container {
+            color: black !important;
+            --tw-bg-opacity: 0.2;
+        }
+
+        .export-container h2,
+        .export-container h3 {
+            color: black !important;
+        }
+
+        .export-container .team-item {
+            color: black !important;
+            display: flex;
+            flex: 1 1 auto;
+            font-size: 20px;
+            font-weight: bold;
+            align-items: center;
+            margin-top: 4px;
+            font-size: var(--text-xs);
+            /* calc(1 / 0.75)  */
+        }
+
+        .export-container .team-logo {
+            border: 2px solid black;
+            background-color: white;
+            object-fit: cover;
+            margin: 12px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+        }
+
+        .video-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #lotteryVideo {
+            width: 200px;
+            height: 200px;
+            display: block;
+        }
+
+        .lottery-result {
+            font-size: 20px;
+            font-weight: bold;
+            background-color: white;
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            display: none;
+        }
+
+        @keyframes bounceLogo {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .logo {
+            animation: bounceLogo 2s infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flex flex-row items-center">
+        <div class="w-48 h-48 md:w-48 md:h-48 rounded-full flex items-center justify-center overflow-hidden logo">
+            <img src="Auctionarenalogo.png" alt="Auction-Arena Logo" class="w-full h-full object-cover">
+        </div>
+        <div class="video-container">
+            <button id="assignButton" class="btn btn-primary mb-4">SPIN THE WHEEL</button>
+            <video id="lotteryVideo" src="lottery_animation.mp4" preload="auto"></video>
+            <div id="lotteryResult" class="lottery-result mt-4">---</div>
+        </div>
+        <div id="finalAssignment" class="ml-4 p-6 shadow-lg rounded-lg w-auto h-auto text-center export-container bg-opacity-50">
+            <div class="grid grid-cols-2">
+                <div class="w-auto">
+                    <h2 class="font-bold mb-2 text-center">Group A</h2>
+                    <ul id="groupAList" class="list-row"></ul>
+                </div>
+            </div>
+        </div>
+        <div id="finalAssignment" class="ml-4 p-6 shadow-lg rounded-lg w-auto h-auto text-center export-container bg-opacity-50">
+            <div class="grid grid-cols-2">
+                <div class="w-auto">
+                    <h2 class="font-bold mb-2 text-center">Group B</h2>
+                    <ul id="groupBList" class="list-row"></ul>
+                </div>
+            </div>
+        </div>
+        <script>
+            let teams = [
+                { name: "THE SAVIOUR", logo: "./Team1.png" },
+                { name: "FIGHTING TIGERS", logo: "./Team2.png" },
+                { name: "UNI CHEVALIER", logo: "./Team3.png" },
+                { name: "SMRITI SANGHA", logo: "./Team4.png" },
+                { name: "SIMPL CLUB", logo: "./Team5.png" },
+                { name: "BLACK SWIFT", logo: "./Team6.png" },
+                { name: "WISH INDIA", logo: "./Team7.png" },
+                { name: "NEW TOWN AMATEUR SC", logo: "./Team8.png" }
+            ];
+            let groupA = [];
+            let groupB = [];
+            let turn = 0;
+
+            document.getElementById("assignButton").addEventListener("click", function () {
+                if (teams.length === 0) return;
+
+                let video = document.getElementById("lotteryVideo");
+                let resultBox = document.getElementById("lotteryResult");
+
+                video.style.display = "block";
+                resultBox.style.display = "none";
+                video.play();
+
+                video.onended = function () {
+                    let randomIndex = Math.floor(Math.random() * teams.length);
+                    let selectedTeam = teams[randomIndex];
+                    teams.splice(randomIndex, 1);
+
+                    video.style.display = "block";
+                    resultBox.textContent = selectedTeam.name;
+                    resultBox.style.display = "block";
+
+                    let listItem = `<li class='team-item'><img src='${selectedTeam.logo}' class='team-logo' crossorigin='anonymous'>${selectedTeam.name}</li>`;
+                    if (turn % 2 === 0) {
+                        groupA.push(selectedTeam);
+                        document.getElementById("groupAList").innerHTML += listItem;
+                    } else {
+                        groupB.push(selectedTeam);
+                        document.getElementById("groupBList").innerHTML += listItem;
+                    }
+                    turn++;
+
+                    document.getElementById("statusMessage").textContent = `${selectedTeam.name} has been assigned!`;
+
+                    if (teams.length === 0) {
+                        document.getElementById("assignButton").disabled = true;
+                        document.getElementById("statusMessage").textContent = "All teams have been assigned!";
+                    }
+                };
+            });
+        </script>
+</body>
+
+</html>

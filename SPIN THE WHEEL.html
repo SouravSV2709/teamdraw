@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Team Assigner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.2/dist/full.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .blinking {
+            animation: blink 0.5s infinite;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shuffle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        .shuffle-animation {
+            animation: shuffle 0.3s infinite;
+        }
+        .team-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s forwards;
+        }
+        .team-logo {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        #finalAssignment {
+    background-color: white !important;
+}
+
+    </style>
+</head>
+<body>
+    <div class="p-6 bg-white shadow-lg rounded-lg w-96 text-center">
+        <h2 class="text-xl font-bold mb-4">Random Team Assigner</h2>
+        <button id="assignButton" class="btn btn-primary mb-4">Assign Team</button>
+        <div id="shuffleBox" class="text-lg font-bold text-gray-700 hidden">Shuffling...</div>
+        <p id="statusMessage" class="mt-4 text-sm text-gray-600"></p>
+    </div>
+
+    <div id="finalAssignment" class="mt-6 p-6 bg-white shadow-lg rounded-lg w-96 text-center">
+        <h2 class="text-xl font-bold mb-4">Final Team Assignment</h2>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="card w-full bg-base-100 shadow-md p-4">
+                <h3 class="font-bold mb-2">Group A</h3>
+                <ul id="groupAList" class="list-disc list-inside"></ul>
+            </div>
+            <div class="card w-full bg-base-100 shadow-md p-4">
+                <h3 class="font-bold mb-2">Group B</h3>
+                <ul id="groupBList" class="list-disc list-inside"></ul>
+            </div>
+        </div>
+        <button id="exportButton" class="btn btn-secondary mt-4">Export to JPG</button>
+    </div>
+
+    <script>
+        let teams = [
+            { name: "Team 1", logo: "./Team1.png" },
+            { name: "Team 2", logo: "./Team2.png" },
+            { name: "Team 3", logo: "./Team3.png" },
+            { name: "Team 4", logo: "./Team4.png" },
+            { name: "Team 5", logo: "./Team5.png" },
+            { name: "Team 6", logo: "./Team6.png" },
+            { name: "Team 7", logo: "./Team7.png" },
+            { name: "Team 8", logo: "./Team8.png" }
+        ];
+        let groupA = [];
+        let groupB = [];
+        let turn = 0;
+
+        document.getElementById("assignButton").addEventListener("click", function() {
+            if (teams.length === 0) return;
+            
+            let shuffleBox = document.getElementById("shuffleBox");
+            shuffleBox.classList.remove("hidden");
+            shuffleBox.classList.add("shuffle-animation");
+            shuffleBox.textContent = "Shuffling...";
+            
+            setTimeout(() => {
+                let randomIndex = Math.floor(Math.random() * teams.length);
+                let selectedTeam = teams[randomIndex];
+                teams.splice(randomIndex, 1);
+                
+                shuffleBox.textContent = selectedTeam.name;
+                shuffleBox.classList.remove("shuffle-animation");
+                setTimeout(() => {
+                    shuffleBox.classList.add("hidden");
+                    
+                    let listItem = `<li class='team-item'><img src='${selectedTeam.logo}' class='team-logo'>${selectedTeam.name}</li>`;
+                    if (turn % 2 === 0) {
+                        groupA.push(selectedTeam);
+                        document.getElementById("groupAList").innerHTML += listItem;
+                    } else {
+                        groupB.push(selectedTeam);
+                        document.getElementById("groupBList").innerHTML += listItem;
+                    }
+                    turn++;
+                    
+                    document.getElementById("statusMessage").textContent = `${selectedTeam.name} has been assigned!`;
+                    
+                    if (teams.length === 0) {
+                        document.getElementById("assignButton").disabled = true;
+                        document.getElementById("statusMessage").textContent = "All teams have been assigned!";
+                    }
+                }, 1000);
+            }, 3000);
+        });
+
+        document.getElementById("exportButton").addEventListener("click", function() {
+    setTimeout(() => {
+        html2canvas(document.getElementById("finalAssignment"), { 
+            useCORS: true, 
+            allowTaint: false, 
+            scale: 3  // Increase the scale for better resolution
+        }).then(canvas => {
+            let link = document.createElement("a");
+            link.download = "team_assignment.jpg";
+            link.href = canvas.toDataURL("image/jpg");
+            link.click();
+        });
+    }, 500);
+});
+    </script>
+</body>
+</html>
