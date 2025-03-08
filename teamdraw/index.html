@@ -1,1 +1,300 @@
-<h1>Welcome to Sub1</h1>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Team Assigner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.2/dist/full.css" rel="stylesheet">
+    <style>
+        body {
+            background: lightcyan;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .export-container {
+            color: black !important;
+            --tw-bg-opacity: 0.2;
+        }
+
+        .export-container h2,
+        .export-container h3 {
+            color: black !important;
+        }
+
+        .export-container .team-item {
+            color: black !important;
+            display: flex;
+            flex: 1 1 auto;
+            font-size: 20px;
+            font-weight: bold;
+            align-items: center;
+            margin-top: 4px;
+            font-size: var(--text-xs);
+            /* calc(1 / 0.75)  */
+        }
+
+        .export-container .team-logo {
+            border: 2px solid black;
+            background-color: white;
+            object-fit: cover;
+            margin: 12px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+        }
+
+        .video-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #lotteryVideo {
+            width: 200px;
+            height: 200px;
+            display: block;
+        }
+
+        .lottery-result {
+            font-size: 20px;
+            font-weight: bold;
+            background-color: white;
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            display: none;
+        }
+
+        @keyframes bounceLogo {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .logo {
+            animation: bounceLogo 2s infinite;
+        }
+
+        /* Bubble Animation */
+        .bubbles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .bubble {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            opacity: 0.9;
+            animation: floatBubbles 5s infinite ease-in-out;
+        }
+
+        @keyframes floatBubbles {
+            0% {
+                transform: translateY(100vh) scale(0.5);
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .flip-card {
+            perspective: 1000px;
+            /* Creates 3D perspective */
+        }
+
+        .flip-inner {
+            transform-style: preserve-3d;
+            animation: flip 8s infinite;
+            /* Automatic flipping */
+        }
+
+        .flip-front,
+        .flip-back {
+            backface-visibility: hidden;
+            /* Hide the back when front is visible */
+        }
+
+        .flip-back {
+            transform: rotateY(180deg);
+            /* Position the back face */
+        }
+
+        @keyframes flip {
+
+            0%,
+            100% {
+                transform: rotateY(0deg);
+                /* Start and end at front */
+            }
+
+            50% {
+                transform: rotateY(180deg);
+                /* Show the back in the middle */
+            }
+        }
+        .marquee {
+            display: flex;
+            align-items: baseline;
+            animation: marquee 25s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes marquee {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(-200%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div class="marquee space-x-2 text-red-500">
+            <p>Digitalize your auction experience with Auction Arena! Reach us at 📞 9547652702 (Sourav Mukherjee). </p>
+        </div>    
+        <header class="p-0 m-0">
+            <div class="flex flex-col justify-center items-center">
+                <div class="relative flip-card w-72 h-72">
+                    <div class="flip-inner relative w-full h-full"><!-- Front Face -->
+                        <div class="flip-front absolute w-72 h-72 text-white rounded-full object-cover"><img
+                                src="Tournamentlogo.png" alt="AAYS Logo" class="rounded-full object-fit"></div>
+                        <!-- Back Face -->
+                        <div class="flip-back absolute w-72 h-72 text-white rounded-full"><img
+                                src="Auctionarenalogo.png" alt="Auction-Arena Logo"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="bubbles"></div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const bubbleContainer = document.querySelector(".bubbles");
+                const colors = ['#ff6b6b', '#6bff9b', '#6bafff', '#ffbf69', '#d896ff']; // Different bubble colors
+                function createBubbles() {
+                    for (let i = 0; i < 40; i++) {
+                        let bubble = document.createElement("div");
+                        bubble.classList.add("bubble");
+                        let size = Math.random() * 30 + 10;
+                        bubble.style.width = `${size}px`;
+                        bubble.style.height = `${size}px`;
+                        bubble.style.left = `${Math.random() * 100}vw`;
+                        bubble.style.bottom = `${Math.random() * 100}vh`; // Bubbles spread across full height
+                        bubble.style.animationDuration = `${Math.random() * 5 + 5}s`;
+                        bubble.style.animationDelay = `${Math.random() * 5}s`;
+                        bubble.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        bubbleContainer.appendChild(bubble);
+                    }
+                }
+                createBubbles();
+            });
+        </script>
+        <div class="flex flex-row">
+            <div class="video-container"><button id="assignButton" class="btn btn-primary mb-4">SPIN THE
+                    WHEEL</button><video id="lotteryVideo" src="lottery_animation.mp4" preload="auto"></video>
+                <div id="lotteryResult" class="lottery-result mt-4">---</div>
+            </div>
+            <div id="finalAssignment"
+                class=" ml-4 p-6 shadow-lg rounded-lg w-auto h-auto text-center export-container bg-opacity-50">
+                <div class="grid grid-cols-2">
+                    <div class="w-auto">
+                        <h1 class="font-bold mb-2 text-center">Group A</h1>
+                        <ul id="groupAList" class="list-row"></ul>
+                    </div>
+                </div>
+            </div>
+            <div id="finalAssignment"
+                class=" ml-4 p-6 shadow-lg rounded-lg w-auto h-auto text-center export-container bg-opacity-50">
+                <div class="grid grid-cols-2">
+                    <div class="w-auto">
+                        <h1 class="font-bold mb-2 text-center">Group B</h1>
+                        <ul id="groupBList" class="list-row"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let teams = [
+            { name: "THE SAVIOUR", logo: "./Team1.png" },
+            { name: "FIGHTING TIGERS", logo: "./Team2.png" },
+            { name: "UNI CHEVALIER", logo: "./Team3.png" },
+            { name: "SMRITI SANGHA", logo: "./Team4.png" },
+            { name: "SIMPL CLUB", logo: "./Team5.png" },
+            { name: "BLACK SWIFT", logo: "./Team6.png" },
+            { name: "WISH INDIA", logo: "./Team7.png" },
+            { name: "NEW TOWN AMATEUR SC", logo: "./Team8.png" }
+        ];
+        let groupA = [];
+        let groupB = [];
+        let turn = 0;
+        document.getElementById("assignButton").addEventListener("click", function () {
+            if (teams.length === 0) return;
+            let video = document.getElementById("lotteryVideo");
+            let resultBox = document.getElementById("lotteryResult");
+            video.style.display = "block";
+            resultBox.style.display = "none";
+            video.play();
+            video.onended = function () {
+                let randomIndex = Math.floor(Math.random() * teams.length);
+                let selectedTeam = teams[randomIndex];
+                teams.splice(randomIndex, 1);
+                video.style.display = "block";
+                resultBox.textContent = selectedTeam.name;
+                resultBox.style.display = "block";
+                let listItem = `<li class='team-item'><img src='${selectedTeam.logo}' class='team-logo' crossorigin='anonymous'>${selectedTeam.name}</li>`;
+                if (turn % 2 === 0) {
+                    groupA.push(selectedTeam);
+                    document.getElementById("groupAList").innerHTML += listItem;
+                } else {
+                    groupB.push(selectedTeam);
+                    document.getElementById("groupBList").innerHTML += listItem;
+                }
+                turn++;
+                if (teams.length === 0) {
+                    document.getElementById("assignButton").disabled = true;
+                }
+            };
+        });
+    </script>
+    <footer class="text-center text-gray-600 mt-8">
+        &copy; Auction Arena 2025. All rights reserved.
+    </footer>
+    </div>
+</body>
+
+</html>
