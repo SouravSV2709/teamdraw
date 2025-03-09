@@ -34,22 +34,19 @@
         .export-container .team-item {
             color: black !important;
             display: flex;
-            flex: 1 1 auto;
-            font-size: 20px;
+            font-size: 10px;
             font-weight: bold;
             align-items: center;
-            margin-top: 4px;
-            font-size: var(--text-xs);
-            /* calc(1 / 0.75)  */
+            margin-top: 2px;
         }
 
         .export-container .team-logo {
             border: 2px solid black;
             background-color: white;
             object-fit: cover;
-            margin: 12px;
-            width: 80px;
-            height: 80px;
+            margin: 6px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
         }
 
@@ -182,7 +179,7 @@
     </style>
 </head>
 
-<body>
+<body class="scale-100">
     <div>
         <div class="marquee space-x-2 text-red-500">
             <p>Digitalize your auction experience with Auction Arena! Reach us at 📞 9547652702 (Sourav Mukherjee). </p>
@@ -230,7 +227,7 @@
             </div>
             <div id="finalAssignment"
                 class=" ml-4 p-6 shadow-lg rounded-lg w-auto h-auto text-center export-container bg-opacity-50">
-                <div class="grid grid-cols-2">
+                <div class="card">
                     <div class="w-auto">
                         <h1 class="font-bold mb-2 text-center">Group A</h1>
                         <ul id="groupAList" class="list-row"></ul>
@@ -239,7 +236,7 @@
             </div>
             <div id="finalAssignment"
                 class=" ml-4 p-6 shadow-lg rounded-lg w-auto h-auto text-center export-container bg-opacity-50">
-                <div class="grid grid-cols-2">
+                <div class="card">
                     <div class="w-auto">
                         <h1 class="font-bold mb-2 text-center">Group B</h1>
                         <ul id="groupBList" class="list-row"></ul>
